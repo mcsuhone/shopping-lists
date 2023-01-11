@@ -1,9 +1,14 @@
-<h1>Mese</h1>
-<form method="POST">
-    <input type="text" name="sender" />
-    <input type="text" name="message" />
-    <input type="submit" value="Send message!" />
-</form>
-<% it.messages.forEach((row) => { %>
-    <h2> <%= row.sender %>: <%= row.message %></h2>
-<% }); %>
+<% layout("./layouts/shoppinglistlayout.eta") %>
+
+<h1> Shared shopping lists </h1>
+<a href="/lists"> Lists </a>
+
+
+<% if (it.shopping_list_count === 0 && it.shopping_items_count === 0) { %>
+    <h2> No shopping lists yet. </h2>
+<% } else { %>
+<ul>
+    <li>Shopping lists: <%= it.shopping_list_count %> </li>
+    <li>Shopping list items: <%= it.shopping_items_count %> </li>
+</ul>
+<% } %>

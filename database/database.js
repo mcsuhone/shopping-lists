@@ -1,4 +1,4 @@
-import { Pool } from "https://deno.land/x/postgres@v0.16.1/mod.ts";
+import { Pool } from "https://deno.land/x/postgresjs@v3.3.3/mod.js";
 
 const CONCURRENT_CONNECTIONS = 2;
 

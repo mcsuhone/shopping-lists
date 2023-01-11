@@ -1,49 +1,37 @@
-import { serve } from "https://deno.land/std@0.140.0/http/server.ts";
-import { configure, renderFile } from "https://deno.land/x/eta@v1.12.3/mod.ts";
-import * as messageService from "./services/messageService.js";
+import { serve } from "https://deno.land/std@0.171.0/http/server.ts";
+import * as starterPageController from "./controllers/starterPageController.js";
+import * as shoppingListController from "./controllers/shoppingListController.js";
+import * as shoppingItemController from "./controllers/shoppingItemController.js";
 
-configure({
-  views: `${Deno.cwd()}/views/`,
-});
-
-const responseDetails = {
-  headers: { "Content-Type": "text/html;charset=UTF-8" },
-};
-
-const data = {
-  messages: [],
-};
-
-const redirectTo = (path) => {
-  return new Response(`Redirecting to ${path}.`, {
-    status: 303,
-    headers: {
-      "Location": path,
-    },
-  });
-}
-
-const sendMessage = async (request) => {
-  const formData = await request.formData();
-  await messageService.create(formData.get("sender"), formData.get("message"));
-};
-
-const getMessages = async (request) => {
-  return await messageService.findAll();
-};
-
-const handleRequest = async (request) => {
+const handleRequest = (request) => {
   const url = new URL(request.url);
-  if (request.method === "GET" && url.pathname === "/") {
-    data.messages = await getMessages(request);
-    return new Response(await renderFile("index.eta", data), responseDetails);
-  }
-  else if (request.method === "POST") {
-    await sendMessage(request);
-    return redirectTo("/");
-  }
-};
 
+  // Shopping list logic
+  if (request.method === "GET" && url.pathname === "/") {
+    return starterPageController.getStarterPage();
+  } else if (request.method === "GET" && url.pathname === "/lists") {
+    return shoppingListController.getShoppingLists();
+  } else if (request.method === "POST" && url.pathname === "/lists") {
+    return shoppingListController.addShoppingList(request);
+  } else if (
+    request.method === "POST" && url.pathname.match("/lists/[0-9]+/deactivate")
+  ) {
+    return shoppingListController.deactivateShoppingList(request);
+  } // Shopping item logic
+  else if (request.method === "GET" && url.pathname.match("/lists/[0-9]+")) {
+    return shoppingItemController.getShoppingItems(request);
+  } else if (
+    request.method === "POST" &&
+    url.pathname.match("/lists/[0-9]+/items/[0-9]+/collect")
+  ) {
+    return shoppingItemController.collectShoppingItem(request);
+  } else if (
+    request.method === "POST" && url.pathname.match("/lists/[0-9]+/items")
+  ) {
+    return shoppingItemController.addShoppingItem(request);
+  }
+  return new Response("Not found", { status: 404 });
+};
 
 let port = 7777;
 if (Deno.args.length > 0) {
