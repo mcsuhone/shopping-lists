@@ -1,17 +1,15 @@
-import { executeQuery } from "../database/database.js";
+import { sql } from "../database/database.js";
 
 const getShoppingListCount = async () => {
-    const result = await executeQuery(
-        "SELECT COUNT(*) FROM shopping_lists;"
-    );
-    return result.rows[0].count;
+    const result = await sql
+        `SELECT * FROM shopping_lists;`;
+    return result.length;
 };
 
 const getShoppingItemCount = async () => {
-    const result = await executeQuery(
-        "SELECT COUNT(*) FROM shopping_list_items;"
-    );
-    return result.rows[0].count;
+    const result = await sql
+        `SELECT * FROM shopping_list_items;`;
+    return result.length;
 };
 
 export { getShoppingListCount, getShoppingItemCount };

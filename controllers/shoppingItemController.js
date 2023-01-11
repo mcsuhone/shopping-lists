@@ -3,8 +3,6 @@ import * as utils from "../utils/requestUtils.js";
 import * as shoppingItemService from "../services/shoppingItemService.js";
 import * as shoppingListService from "../services/shoppingListService.js";
 
-
-
 const getShoppingItems = async (request) => {
     const shopping_list_id = await utils.getIDFromRequest(request, 2);
     const itemData = {
